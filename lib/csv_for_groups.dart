@@ -3,7 +3,6 @@ import 'dart:io';
 bool dev = false;
 
 void execute() {
-  List l = [];
   File f = File('dat/input.txt');
   List<String> ls = f.readAsLinesSync();
   String groupName = '';

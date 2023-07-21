@@ -6,3 +6,4 @@
 build/
 dat/*.txt
 dat/*.csv
+*.csv

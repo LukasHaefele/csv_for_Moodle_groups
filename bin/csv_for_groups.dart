@@ -14,6 +14,8 @@ void main(List<String> arguments) {
     fixID();
   } else if (arguments[0] == 'j') {
     coursesJ1();
+  } else if (arguments[0] == 'r') {
+    relution();
   }
   /*
   switch (arguments[0]) {

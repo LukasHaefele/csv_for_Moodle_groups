@@ -7,3 +7,7 @@ build/
 dat/*.txt
 dat/*.csv
 *.csv
+dat/old/*.txt
+dat/old/*.csv
+dat/output/*.txt
+dat/output/*.csv

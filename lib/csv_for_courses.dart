@@ -6,7 +6,7 @@ void startCourseInterface() {
     for (String grade in classes) {
       for (String cl in sub) {
         String fullname = 'SJ 23-24 $grade$cl ${course[1]} ';
-        print('kzl für $fullname: ');
+        //print('kzl für $fullname: ');
         String kzl = stdin.readLineSync() ?? '';
         if (kzl == '') {
           continue;
@@ -31,7 +31,7 @@ void koppelCourseInterface() {
     for (String grade in classes) {
       for (int i = 1; i <= 4; i++) {
         String fullname = 'SJ 23-24 ${course[1]}$i $grade ';
-        print('kzl für $fullname: ');
+        //print('kzl für $fullname: ');
         String kzl = stdin.readLineSync() ?? '';
         if (kzl == '') {
           continue;
@@ -57,7 +57,7 @@ void coursesJ1() {
     for (int i = 1; i <= 4; i++) {
       String cl = i.toString();
       String fullname = '$grade ${course[1]}$cl ';
-      print('kzl für $fullname: ');
+      //print('kzl für $fullname: ');
       String kzl = stdin.readLineSync() ?? '';
       if (kzl != '') {
         fullname = fullname + kzl;
@@ -69,7 +69,7 @@ void coursesJ1() {
       }
 
       fullname = '$grade ${course[1].toLowerCase()}$cl ';
-      print('kzl für $fullname: ');
+      //print('kzl für $fullname: ');
       kzl = stdin.readLineSync() ?? '';
       if (kzl != '') {
         fullname = fullname + kzl;
@@ -129,4 +129,81 @@ void fixID() {
     }
   }
   f.writeAsStringSync(writeString.join('\n'));
+}
+
+void relution() {
+  List<Map> students = getStudentsFromCSV();
+  List<Map> courses = getCoursesFromCSV();
+
+  List<String> export = ["name;roleName;memberType"];
+  List<String> check = [];
+
+  for (Map course in courses) {
+    String courseName = '${course["Kurs"]}-${course["Kursl"]}';
+    List<String> name = course["SchName"].replaceAll('"', '').split(";");
+
+    String rolename = "";
+    for (Map student in students) {
+      //print("${student['Vorname']} ${student['Nachname']} - $name");
+      if ((student['Vorname'].contains(name[1]) &&
+              student['Nachname'].contains(name[0])) ||
+          (student['Anmeldename'].contains(name[0]) &&
+              student['Anmeldename'].contains(name[1]))) {
+        rolename = student["Anmeldename"];
+      }
+    }
+    if (rolename != "") {
+      String e = '"$courseName";"$rolename";"STUDENT"';
+      export.add(e);
+    } else {
+      check.add(course.toString());
+    }
+  }
+  File('dat/output/export.csv')
+    ..createSync()
+    ..writeAsStringSync(export.join('\n'));
+  File('dat/output/check.txt')
+    ..createSync()
+    ..writeAsStringSync(check.join('\n'));
+}
+
+List<Map> getCoursesFromCSV() {
+  List<Map> courses = [];
+  List<String> cou = File('dat/courses.csv').readAsLinesSync();
+  List<String> keys = cou[0].split(',');
+  cou.removeAt(0);
+
+  for (String line in cou) {
+    List<String> unparsedCourse = line.split(',');
+    Map course = {};
+    for (int i = 0; i < keys.length; i++) {
+      if (unparsedCourse[i] != '') {
+        course[keys[i]] = unparsedCourse[i];
+      }
+    }
+    courses.add(course);
+  }
+  //print(courses);
+  return courses;
+}
+
+List<Map> getStudentsFromCSV() {
+  List<String> stu = File('dat/students.csv').readAsLinesSync();
+  List<String> keys = stu[0].split(';');
+  //print(keys);
+  stu.removeAt(0);
+  List<Map> students = [];
+  for (String line in stu) {
+    List<String> unparsedStudent = line.split(';');
+    Map student = {};
+    for (int i = 0; i < keys.length; i++) {
+      if (unparsedStudent[i] != '') {
+        student[keys[i]] = unparsedStudent[i];
+      }
+    }
+    students.add(student);
+  }
+  //print(students);
+
+  return students;
 }

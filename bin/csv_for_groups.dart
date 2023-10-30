@@ -16,6 +16,10 @@ void main(List<String> arguments) {
     coursesJ1();
   } else if (arguments[0] == 'r') {
     relution();
+  } else if (arguments[0] == 'd'){
+    relutionDropClasses();
+  } else if (arguments[0] == 'o'){
+    fixComma();
   }
   /*
   switch (arguments[0]) {

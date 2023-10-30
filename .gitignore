@@ -11,3 +11,6 @@ dat/old/*.txt
 dat/old/*.csv
 dat/output/*.txt
 dat/output/*.csv
+dat/output/old/*
+dat/output/*.zip
+tables/*

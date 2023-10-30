@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'csv_for_courses.dart';
+
 bool dev = false;
 
 void execute() {
@@ -21,12 +23,12 @@ void execute() {
         .replaceAll('ž', 'z')
         .replaceAll('ß', 'ss')
         .replaceAll('é', 'e')
-        .replaceAll('ä', 'ae')
-        .replaceAll('ö', 'oe')
-        .replaceAll('ü', 'ue')
         .replaceAll('á', 'a')
         .replaceAll('ó', 'o')
-        .replaceAll('è', 'e');
+        .replaceAll('è', 'e')
+        .replaceAll('ä', 'ae')
+        .replaceAll('ö', 'oe')
+        .replaceAll('ü', 'ue');
     if (s[0] == 'g') {
       //if (dev) print(s);
       if (groupName != '') {
@@ -166,4 +168,104 @@ String parseErr() {
   }
   print(r);
   return r;
+}
+
+List<String> relClasses = [
+  "5_SUZ_BEC",
+  "5a_AHL_AUS",
+  "5c_BÜH_ERM",
+  "5d_HOC_KNÖ",
+  "6a_HON_KRÄ",
+  "6b_SEE_LAR",
+  "6c_HAI_KUC",
+  "6d_PAL_JUN",
+  "7a_VAL_BOF",
+  "7b_AIS_RIC",
+  "7c_BEU_OTT",
+  "7d_KRP_SÜR",
+  "8a_CHR_GAR",
+  "8b_GAU_KÜM",
+  "8c_RET",
+  "8d_STF_HAF",
+  "9a_KUP_SOW",
+  "9b_KRU",
+  "9c_EWD_HEI",
+  "9d_NWT1_LEH_EIL",
+  "10a_KOH_SAD",
+  "10b_DRÖ_STA",
+  "10c_LUK_GTK",
+  "J1",
+  "J2",
+  "VKL1",
+  "VKL2",
+  "VKL3",
+  "VKL4"
+  ];
+//List<String> relClasses = ["BNT","Ethik","Französisch","Informatik","Medienbildung","Musik","NWT2","sport"];
+
+void relutionDropClasses(){
+  for (String dropClass in relClasses){
+    print('$dropClass:\n');
+    List<Map> students = getStudentsFromCSV(dropClass);
+    List<List<String>> posUnames = [];
+    for(Map student in students){
+      posUnames.add(['${student['Name']}.${student['Vorname']}'.toLowerCase(),'${student['Vorname']}.${student['Name']}'.toLowerCase()]);
+    }
+    List<String> unames = actualUnames(posUnames);
+    print('unames:\n$unames\n');
+    print('Enter Name for course $dropClass');
+    String courseName = stdin.readLineSync() ?? '';
+    if (courseName == '') courseName = dropClass;
+    print(courseName);
+    String write = 'name;roleName;memberType\n';
+    for (String uname in unames){
+      write += '"$courseName";"$uname";"STUDENT"\n';
+    }
+    saveDropClass(courseName, write);
+  }
+  print('uncaught:\n$uncaught\n');
+}
+
+void saveDropClass(String className, String write){
+  File('dat/output/$className.csv')..createSync()..writeAsStringSync(write);
+}
+
+List<String> uncaught = [];
+
+List<String> actualUnames(List<List<String>> posUnames){
+  List<String> unames = [];
+  List<Map> students = getStudentsFromCSV('students');
+  for(Map user in students){
+    //print('${user['Anmeldename']}\n');
+    if(posUnames.any((innerList) => innerList.contains(user['Anmeldename']) && posUnames.remove(innerList))){
+      unames.add(user['Anmeldename']);
+    }
+  }
+  print('posNames:\n$posUnames\n');
+  for (var element in posUnames) {uncaught.add(element[0]);}
+  return unames;
+}
+
+void fixComma(){
+  for(String s in relClasses){
+    File f = File('dat/$s.csv');
+    List<String> input = f.readAsLinesSync();
+    String write = '';
+    for(String sin in input){
+      write += '${sin
+        .replaceAll(',', ';')
+        .replaceAll('ä', 'ae')
+        .replaceAll('ö', 'oe')
+        .replaceAll('ü', 'ue')
+        .replaceAll('ß', 'ss')
+        .replaceAll('ć', 'c')
+        .replaceAll('ž', 'z')
+        .replaceAll('ß', 'ss')
+        .replaceAll('é', 'e')
+        .replaceAll('á', 'a')
+        .replaceAll('ó', 'o')
+        .replaceAll('è', 'e')}\n';
+    }
+    f.writeAsStringSync(write);
+  }
 }

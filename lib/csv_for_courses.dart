@@ -132,7 +132,7 @@ void fixID() {
 }
 
 void relution() {
-  List<Map> students = getStudentsFromCSV();
+  List<Map> students = getStudentsFromCSV("students");
   List<Map> courses = getCoursesFromCSV();
 
   List<String> export = ["name;roleName;memberType"];
@@ -187,9 +187,10 @@ List<Map> getCoursesFromCSV() {
   return courses;
 }
 
-List<Map> getStudentsFromCSV() {
-  List<String> stu = File('dat/students.csv').readAsLinesSync();
+List<Map> getStudentsFromCSV(String path) {
+  List<String> stu = File('dat/$path.csv').readAsLinesSync();
   List<String> keys = stu[0].split(';');
+  //List<String> keys = stu[0].split(',');
   //print(keys);
   stu.removeAt(0);
   List<Map> students = [];
